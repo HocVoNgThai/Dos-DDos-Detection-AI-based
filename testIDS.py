@@ -48,7 +48,7 @@ class DDoSDetector:
             if self._is_flow_complete(packet, flow):
                 features = self._extract_features(flow)
                 del self.flows[flow_key]
-                self._predict_and_alert(features)  # Gọi trực tiếp, bỏ _is_suspicious
+                self._predict_and_alert(features)  
         except Exception as e:
             logging.error(f"Error processing packet: {e}")
 
@@ -102,38 +102,38 @@ class DDoSDetector:
 
         features = {
             'flow_duration': flow_duration,
-            'Header_Length': 0,  # Placeholder (có thể lấy từ packet[IP].ihl * 4 nếu cần)
+            'Header_Length': 0, 
             'Protocol Type': flow['protocol'],
-            'Duration': flow_duration,  # Sử dụng flow_duration làm placeholder
+            'Duration': flow_duration,  
             'Rate': rate,
-            'Srate': rate,  # Sử dụng Rate làm placeholder
-            'Drate': 0,  # Placeholder
+            'Srate': rate,  
+            'Drate': 0,  
             'fin_flag_number': flow['flags']['F'],
             'syn_flag_number': flow['flags']['S'],
             'rst_flag_number': flow['flags']['R'],
             'psh_flag_number': flow['flags']['P'],
             'ack_flag_number': flow['flags']['A'],
-            'ece_flag_number': 0,  # Placeholder
-            'cwr_flag_number': 0,  # Placeholder
-            'ack_count': flow['flags']['A'],  # Placeholder (có thể nhân với hệ số nếu cần)
-            'syn_count': flow['flags']['S'],  # Placeholder
+            'ece_flag_number': 0,  
+            'cwr_flag_number': 0,  
+            'ack_count': flow['flags']['A'],  
+            'syn_count': flow['flags']['S'],  
             'fin_count': flow['flags']['F'],
             'urg_count': flow['flags']['U'],
             'rst_count': flow['flags']['R'],
-            'HTTP': 0,  # Placeholder (có thể kiểm tra port 80)
-            'HTTPS': 0,  # Placeholder (có thể kiểm tra port 443)
-            'DNS': 0,    # Placeholder (có thể kiểm tra port 53)
-            'Telnet': 0, # Placeholder (có thể kiểm tra port 23)
-            'SMTP': 0,   # Placeholder (có thể kiểm tra port 25)
-            'SSH': 0,    # Placeholder (có thể kiểm tra port 22)
-            'IRC': 0,    # Placeholder (có thể kiểm tra port 6667)
+            'HTTP': 0,  
+            'HTTPS': 0,  
+            'DNS': 0,    
+            'Telnet': 0, 
+            'SMTP': 0,   
+            'SSH': 0,    
+            'IRC': 0,    
             'TCP': is_tcp,
             'UDP': is_udp,
-            'DHCP': 0,   # Placeholder (có thể kiểm tra port 67, 68)
-            'ARP': 0,    # Placeholder
+            'DHCP': 0,   
+            'ARP': 0,    
             'ICMP': is_icmp,
-            'IPv': 1,    # Placeholder
-            'LLC': 1,    # Placeholder
+            'IPv': 1,    
+            'LLC': 1,    
             'Tot sum': total_bytes,
             'Min': min_packet_size,
             'Max': max_packet_size,
@@ -144,9 +144,9 @@ class DDoSDetector:
             'Number': packet_count,
             'Magnitue': np.sqrt(packet_count),
             'Radius': np.sqrt(np.sum(np.diff(packet_sizes)**2)) if packet_sizes.size > 1 else 0,
-            'Covariance': 0,  # Placeholder (có thể tính lại nếu cần)
+            'Covariance': 0,  
             'Variance': np.var(packet_sizes) if packet_sizes.size > 0 else 0,
-            'Weight': 38.5,  # Placeholder
+            'Weight': 38.5,  
             'src_ips': flow['src_ips'],
             'dst_ip': flow['dst_ip']
         }
@@ -154,7 +154,7 @@ class DDoSDetector:
         # Gán các giá trị cho cờ để sử dụng trong _alert
         features['urg_flag_number'] = flow['flags']['U']  # Đảm bảo key này tồn tại
 
-        # Chuyển features thành DataFrame với 46 cột
+
         feature_df = pd.DataFrame([{
             'flow_duration': features['flow_duration'],
             'Header_Length': features['Header_Length'],
@@ -249,5 +249,5 @@ class DDoSDetector:
         pass  # Bỏ qua phần chặn IP
 
 if __name__ == "__main__":
-    detector = DDoSDetector('cnn_model_2-0_batch512_20h37p__06-05-2025.keras')
+    detector = DDoSDetector('Detection-model.keras')
     detector.start(interface='eth0')
